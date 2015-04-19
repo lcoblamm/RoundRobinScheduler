@@ -31,7 +31,27 @@ static void update_curr_other_rr(struct rq *rq)
  */
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
-	// not yet implemented
+	// maybe check/set schedule type of task?
+	// TODOLMC: remove print statements, unneeded comments
+	printf("In enqueue_task\n");
+	if (p->policy == SCHED_OTHER_RR) {
+		printf("Scheduling policy already set to rr\n");
+	}
+	else {
+		printf("Scheduling policy not set to rr\n");
+	}
+	if (p->task_time_slice == other_rr_time_slice) {
+		printf("Time slice already set\n");
+	}
+	else {
+		printf("Time slice not set correctly\n");
+	}
+	// set quantum of task (not sure if needed)
+	p->task_time_slice = other_rr_time_slice;
+	// add task to end of queue
+	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
+	// increment number of tasks in running queue
+	rq->nr_running++;
 }
 
 static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int sleep)
@@ -54,8 +74,7 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
 /*
  * current process is relinquishing control of the CPU
  */
-static void
-yield_task_other_rr(struct rq *rq)
+static void yield_task_other_rr(struct rq *rq)
 {
 	// not yet implemented
 }
