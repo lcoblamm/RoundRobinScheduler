@@ -35,16 +35,16 @@ static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wake
 	// TODOLMC: remove print statements, unneeded comments
 	printf("In enqueue_task\n");
 	if (p->policy == SCHED_OTHER_RR) {
-		printf("Scheduling policy already set to rr\n");
+		kprintf("Scheduling policy already set to rr\n");
 	}
 	else {
-		printf("Scheduling policy not set to rr\n");
+		kprintf("Scheduling policy not set to rr\n");
 	}
 	if (p->task_time_slice == other_rr_time_slice) {
-		printf("Time slice already set\n");
+		kprintf("Time slice already set\n");
 	}
 	else {
-		printf("Time slice not set correctly\n");
+		kprintf("Time slice not set correctly\n");
 	}
 	// set quantum of task (not sure if needed)
 	p->task_time_slice = other_rr_time_slice;
@@ -59,7 +59,10 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
-	// not yet implemented
+	// remove task from queue
+	list_del(&p->other_rr_run_list);
+	// update number of tasks in queue
+	rq->nr_running--;
 }
 
 /*
