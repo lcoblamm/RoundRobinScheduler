@@ -33,18 +33,18 @@ static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wake
 {
 	// maybe check/set schedule type of task?
 	// TODOLMC: remove print statements, unneeded comments
-	printf("In enqueue_task\n");
+	printk(KERN_DEBUG "In enqueue_task\n");
 	if (p->policy == SCHED_OTHER_RR) {
-		kprintf("Scheduling policy already set to rr\n");
+		printk(KERN_DEBUG "Scheduling policy already set to rr\n");
 	}
 	else {
-		kprintf("Scheduling policy not set to rr\n");
+		printk(KERN_DEBUG "Scheduling policy not set to rr\n");
 	}
 	if (p->task_time_slice == other_rr_time_slice) {
-		kprintf("Time slice already set\n");
+		printk(KERN_DEBUG "Time slice already set\n");
 	}
 	else {
-		kprintf("Time slice not set correctly\n");
+		printk(KERN_DEBUG "Time slice not set correctly\n");
 	}
 	// set quantum of task (not sure if needed)
 	p->task_time_slice = other_rr_time_slice;
