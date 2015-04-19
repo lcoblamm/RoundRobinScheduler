@@ -31,7 +31,6 @@ static void update_curr_other_rr(struct rq *rq)
  */
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
-	// maybe check/set schedule type of task?
 	// TODOLMC: remove print statements, unneeded comments
 	printk(KERN_DEBUG "In enqueue_task\n");
 	if (p->policy == SCHED_OTHER_RR) {
@@ -46,6 +45,8 @@ static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wake
 	else {
 		printk(KERN_DEBUG "Time slice not set correctly\n");
 	}
+	// set scheduling category of task (not sure if needed)
+	p->policy = SCHED_OTHER_RR;
 	// set quantum of task (not sure if needed)
 	p->task_time_slice = other_rr_time_slice;
 	// add task to end of queue
@@ -79,7 +80,13 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
  */
 static void yield_task_other_rr(struct rq *rq)
 {
-	// not yet implemented
+	// get current task
+	task_struct* curr = rq->curr;
+	// reset its time slice to default
+	curr->task_time_slice = other_rr_time_slice;
+
+	// move to end
+	requeue_task_other_rr(rq, curr);
 }
 
 /*
