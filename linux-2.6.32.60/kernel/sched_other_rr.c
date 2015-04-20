@@ -105,20 +105,18 @@ static void check_preempt_curr_other_rr(struct rq *rq, struct task_struct *p, in
  */
 static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 {
-	struct task_struct *next;
+	struct task_struct *next = NULL;
 	struct list_head *queue;
-	struct other_rr_rq *other_rr_rq;
+	struct other_rr_rq *other_rr_rq = &rq->other_rr;
 
-	// not yet implemented
+	queue = &other_rr_rq->queue;
+	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
 
-	/* after selecting a task, we need to set a timer to maintain correct
-	 * runtime statistics. You can uncomment this line after you have
-	 * written the code to select the appropriate task.
-	 */
-	//next->se.exec_start = rq->clock;
+	// set timer to maintain correct runtime statistics
+	next->se.exec_start = rq->clock;
 	
 	/* you need to return the selected task here */
-	return NULL;
+	return next;
 }
 
 static void put_prev_task_other_rr(struct rq *rq, struct task_struct *p)
