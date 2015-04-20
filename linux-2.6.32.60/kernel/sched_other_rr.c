@@ -109,6 +109,9 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	struct list_head *queue;
 	struct other_rr_rq *other_rr_rq = &rq->other_rr;
 
+	if (other_rr_rq->nr_running == 0) {
+		return NULL;
+	}
 	queue = &other_rr_rq->queue;
 	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
 
@@ -204,12 +207,25 @@ move_one_task_other_rr(struct rq *this_rq, int this_cpu, struct rq *busiest,
 /*
  * task_tick_other_rr is invoked on each scheduler timer tick.
  */
-static void task_tick_other_rr(struct rq *rq, struct task_struct *p,int queued)
+static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 {
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
-	// not yet implemented
+	// check if it's FIFO or RR
+	if (other_rr_time_slice == 0) {
+		return;
+	}
+
+	// decrement time by 1
+	if (p->task_time_slice > 0) {
+		p->task_time_slice--;
+		return;
+	}
+	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
+	p->task_time_slice = other_rr_time_slice;
+	requeue_task_other_rr(rq, p);
+	set_tsk_need_resched(p);
 }
 
 /*
