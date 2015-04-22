@@ -7208,7 +7208,7 @@ out_unlock:
 	return retval;
 }
 
-SYSCALL_DEFINE1(sched_other_rr_getquantum, int, quantum){
+SYSCALL_DEFINE1(sched_other_rr_setquantum, int, quantum){
     other_rr_time_slice = quantum;
     return other_rr_time_slice;
 }
