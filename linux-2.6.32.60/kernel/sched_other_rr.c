@@ -85,7 +85,8 @@ static void yield_task_other_rr(struct rq *rq)
 		return;
 	}
 	// get current task
-	struct task_struct* curr = rq->curr;
+	struct task_struct* curr;
+	curr = rq->curr;
 	// reset its time slice to default
 	curr->task_time_slice = other_rr_time_slice;
 	// move to end
