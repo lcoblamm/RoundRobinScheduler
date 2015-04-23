@@ -66,7 +66,7 @@ static void yield_task_other_rr(struct rq *rq)
 //	Not sure if this is needed? If it is just uncomment.
   
 
-  	// if only one in queue, no need to move queue around
+  /*	// if only one in queue, no need to move queue around
 	if (rq->other_rr.nr_running == 1) {
 		return;
 	}
@@ -74,7 +74,7 @@ static void yield_task_other_rr(struct rq *rq)
 	struct task_struct* curr;
 	curr = rq->curr;
 	// reset its time slice to default
-	curr->task_time_slice = other_rr_time_slice; 
+	curr->task_time_slice = other_rr_time_slice; */
 	// move to end
 	requeue_task_other_rr(rq, curr);
 }
@@ -201,19 +201,15 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 
 	// check if it's FIFO or RR
 	if (other_rr_time_slice == 0) {
-		printk("other_rr_time_slice is 0, running as FIFO\n");
 		return;
 	}
 
 	// decrement time by 1
-	printk("task_tick: current task_time_slice = %d\n", p->task_time_slice);
 	if (p->task_time_slice > 0) {
 		p->task_time_slice--;
-		printk("task_tick: task_time_slice after decrementing = %d\n", p->task_time_slice);
 		return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
-	printk("task_tick: task_time_slice was not > 0, resetting to end of queue\n");
 	p->task_time_slice = other_rr_time_slice;
 	requeue_task_other_rr(rq, p);
 	set_tsk_need_resched(p);
