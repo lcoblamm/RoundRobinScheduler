@@ -31,7 +31,9 @@ static void update_curr_other_rr(struct rq *rq)
  */
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
-	printk(KERN_DEBUG "Enqueueing thread %d\n", p->tgid);
+	printk(KERN_DEBUG "Enqueueing thread\n");
+	p->policy = SCHED_OTHER_RR;
+	p->task_time_slice = other_rr_time_slice;
 	// add task to end of queue
 	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 	// increment number of tasks in running queue
@@ -44,7 +46,7 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
-	printk(KERN_DEBUG "Dequeuing thread %d\n", p->tgid);
+	printk(KERN_DEBUG "Dequeuing thread\n");
 	// remove task from queue
 	list_del(&p->other_rr_run_list);
 	// update number of tasks in queue
@@ -91,7 +93,6 @@ static void check_preempt_curr_other_rr(struct rq *rq, struct task_struct *p, in
  */
 static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 {
-	//printk(KERN_DEBUG "Picking next task\n");
 	struct task_struct *next = NULL;
 	struct list_head *queue;
 	struct other_rr_rq *other_rr_rq = &rq->other_rr;
@@ -101,14 +102,6 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	}
 	queue = &other_rr_rq->queue;
 	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
-	struct task_struct* curr;
-	curr = rq->curr;
-	if (curr == next) {
-		printk(KERN_DEBUG "Curr & next are same in pick_next_task");
-	}
-	else {
-		printk(KERN_DEBUG "Curr & next are different in pick_next_task");	
-	}
 
 	// set timer to maintain correct runtime statistics
 	next->se.exec_start = rq->clock;
@@ -204,6 +197,7 @@ move_one_task_other_rr(struct rq *this_rq, int this_cpu, struct rq *busiest,
  */
 static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 {
+	printk(KERN_DEBUG "Entering task_tick\n");
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
@@ -213,7 +207,7 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 		return;
 	}
 
-	printk(KERN_DEBUG "current time slice for task: %i\n", p->task_time_slice);
+	printk(KERN_DEBUG "Current time slice for task: %i\n", p->task_time_slice);
 	// decrement time by 1
 	if (p->task_time_slice > 0) {
 		p->task_time_slice--;
