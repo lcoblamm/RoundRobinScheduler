@@ -31,6 +31,8 @@ static void update_curr_other_rr(struct rq *rq)
  */
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
+	printk("Other_rr_time_slice: %i\n", other_rr_time_slice);
+	p->task_time_slice = other_rr_time_slice;
 	// add task to end of queue
 	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 	// increment number of tasks in running queue
@@ -62,7 +64,17 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
  */
 static void yield_task_other_rr(struct rq *rq)
 {
-	requeue_task_other_rr(rq, rq->curr);
+	// if only one in queue, no need to move queue around
+	if (rq->other_rr.nr_running == 1) {
+		return;
+	}
+	// get current task
+	struct task_struct* curr;
+	curr = rq->curr;
+	// reset its time slice to default
+	curr->task_time_slice = other_rr_time_slice;
+	// move to end
+	requeue_task_other_rr(rq, curr);
 }
 
 /*
@@ -191,8 +203,6 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 	}
 
 	// decrement time by 1
-	int timeSlice = p->task_time_slice;
-	printk("Timeslice: %i\n", timeSlice);
 	if (p->task_time_slice > 0) {
 		p->task_time_slice--;
 		return;
