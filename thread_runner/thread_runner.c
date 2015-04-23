@@ -430,6 +430,7 @@ void *run(void *arg)
   if (prio_set) {
     setpriority(PRIO_PROCESS, tid, my_args->prio);
   }
+  printf("ThreadID: %d\n", tid);
 
   /* write characters to the val_buf */
   for(i = 0; i<my_args->nchars; i++) {
