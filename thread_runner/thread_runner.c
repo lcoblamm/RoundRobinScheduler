@@ -291,9 +291,6 @@ void parse_arguments(int argc, char *argv[])
       case '?':
         /* getopt_long already printed an error message */
         break;
-      default:
-        printf("Invalid option...")
-        exit(1);
     }
   }
 
