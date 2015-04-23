@@ -31,24 +31,6 @@ static void update_curr_other_rr(struct rq *rq)
  */
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
-	// TODOLMC: remove print statements, unneeded comments
-	/*printk(KERN_DEBUG "In enqueue_task\n");
-	if (p->policy == SCHED_OTHER_RR) {
-		printk(KERN_DEBUG "Scheduling policy already set to rr\n");
-	}
-	else {
-		printk(KERN_DEBUG "Scheduling policy not set to rr\n");
-	}
-	if (p->task_time_slice == other_rr_time_slice) {
-		printk(KERN_DEBUG "Time slice already set\n");
-	}
-	else {
-		printk(KERN_DEBUG "Time slice not set correctly\n");
-	}
-	// set scheduling category of task (not sure if needed)
-	p->policy = SCHED_OTHER_RR;
-	// set quantum of task (not sure if needed)
-	p->task_time_slice = other_rr_time_slice; */
 	// add task to end of queue
 	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 	// increment number of tasks in running queue

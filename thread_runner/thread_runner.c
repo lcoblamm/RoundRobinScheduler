@@ -248,7 +248,7 @@ void parse_arguments(int argc, char *argv[])
       {0,0,0,0}
     };
 
-    c = getopt_long(argc, argv, "hdvs:p:q:", long_options, &option_index);
+    c = getopt_long(argc, argv, "hdva:s:p:q:", long_options, &option_index);
     if (c == -1)
       break;
 
@@ -390,6 +390,7 @@ void dump_val_buf()
 
   printf("\ndumping the val_buf (aggregate=%d):\n\n", aggregate);
 
+  printf("Total_num_chars = %d\n", total_num_chars);
   cnt = 0, lcnt = 0;
   for (i = 0, cur = val_buf[0]; i < total_num_chars;) {
     if (cur == val_buf[i]) {
@@ -464,6 +465,7 @@ int main(int argc, char *argv[])
     /* priority has no effect -- just use 0 */
     param.sched_priority = 0;
     if ( sched_setscheduler(getpid(), sched_policy, &param) == -1) {
+      printf("Errno: %d\n", errno);
       perror("sched_setscheduler");
       exit(1);
     };
