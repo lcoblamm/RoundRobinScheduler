@@ -201,12 +201,13 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 	}
 
 	// decrement time by 1
+	int timeSlice = p->task_time_slice;
+	printk("Timeslice: %i\n", timeSlice);
 	if (p->task_time_slice > 0) {
 		p->task_time_slice--;
 		return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
-	printk("Requeueing\n");
 	p->task_time_slice = other_rr_time_slice;
 	requeue_task_other_rr(rq, p);
 	set_tsk_need_resched(p);

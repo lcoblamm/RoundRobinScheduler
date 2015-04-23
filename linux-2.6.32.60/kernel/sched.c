@@ -6506,7 +6506,7 @@ __setscheduler(struct rq *rq, struct task_struct *p, int policy, int prio)
 		break;
 	case SCHED_OTHER_RR:
 		p-> sched_class = &other_rr_sched_class;
-		printk("Scheduler changed to Other Round Robin"); 
+		printk("\nScheduler changed to Other Round Robin"); 
 		break;
 	}
 
