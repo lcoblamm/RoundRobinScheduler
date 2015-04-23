@@ -102,7 +102,7 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	}
 	queue = &other_rr_rq->queue;
 	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
-	struct task_struct curr*;
+	struct task_struct* curr;
 	curr = rq->curr;
 	printk(KERN_DEBUG "Current thread: %d\n", curr->tgid);
 	printk(KERN_DEBUG "Next thread: %d\n", next->tgid)
