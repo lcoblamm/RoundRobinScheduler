@@ -248,7 +248,7 @@ void parse_arguments(int argc, char *argv[])
       {0,0,0,0}
     };
 
-    c = getopt_long(argc, argv, "hds:p:q:", long_options, &option_index);
+    c = getopt_long(argc, argv, "hdvs:p:q:", long_options, &option_index);
     if (c == -1)
       break;
 
@@ -455,7 +455,7 @@ int main(int argc, char *argv[])
   num_threads = quantum = ppvals = 0;
 
   parse_arguments(argc, argv);
-  print_arguments();
+  // print_arguments();
 
 
   /* set scheduling policy */
