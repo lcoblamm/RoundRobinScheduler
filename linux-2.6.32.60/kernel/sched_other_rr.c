@@ -105,7 +105,7 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	struct task_struct* curr;
 	curr = rq->curr;
 	printk(KERN_DEBUG "Current thread: %d\n", curr->tgid);
-	printk(KERN_DEBUG "Next thread: %d\n", next->tgid)
+	printk(KERN_DEBUG "Next thread: %d\n", next->tgid);
 
 	// set timer to maintain correct runtime statistics
 	next->se.exec_start = rq->clock;
