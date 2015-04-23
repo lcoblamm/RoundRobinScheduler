@@ -52,7 +52,7 @@ static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wake
 	// add task to end of queue
 	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 	// increment number of tasks in running queue
-	rq->nr_running++;
+	rq->other_rr.nr_running++;
 }
 
 static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int sleep)
@@ -63,7 +63,7 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
 	// remove task from queue
 	list_del(&p->other_rr_run_list);
 	// update number of tasks in queue
-	rq->nr_running--;
+	rq->other_rr.nr_running--;
 }
 
 /*
@@ -81,11 +81,12 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
 static void yield_task_other_rr(struct rq *rq)
 {
 	// if only one in queue, no need to move queue around
-	if (rq->nr_running == 1) {
+	if (rq->other_rr.nr_running == 1) {
 		return;
 	}
 	// get current task
-	struct task_struct* curr = rq->curr;
+	struct task_struct* curr;
+	curr = rq->curr;
 	// reset its time slice to default
 	curr->task_time_slice = other_rr_time_slice;
 	// move to end
@@ -109,7 +110,7 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	struct list_head *queue;
 	struct other_rr_rq *other_rr_rq = &rq->other_rr;
 
-	if (other_rr_rq->nr_running == 0) {
+	if (other_rr_rq->other_rr.nr_running == 0) {
 		return NULL;
 	}
 	queue = &other_rr_rq->queue;

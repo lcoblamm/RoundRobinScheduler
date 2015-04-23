@@ -6504,6 +6504,10 @@ __setscheduler(struct rq *rq, struct task_struct *p, int policy, int prio)
 	case SCHED_RR:
 		p->sched_class = &rt_sched_class;
 		break;
+	case SCHED_OTHER_RR:
+		p-> sched_class = &other_rr_sched_class;
+		printk("Scheduler changed to Other Round Robin"); 
+		break;
 	}
 
 	p->rt_priority = prio;
@@ -6552,7 +6556,7 @@ recheck:
 
 		if (policy != SCHED_FIFO && policy != SCHED_RR &&
 		policy != SCHED_NORMAL && policy != SCHED_BATCH &&
-		policy != SCHED_IDLE)
+		policy != SCHED_IDLE && policy != SCHED_OTHER_RR)
 			return -EINVAL;
 	}
 
@@ -7204,6 +7208,7 @@ out_unlock:
 	return retval;
 }
 
+<<<<<<< HEAD
 //do i need another argument?
 //i am full of self doubt
 SYSCALL_DEFINE1(sched_other_rr_getquantum, int, quantum){
@@ -7211,6 +7216,12 @@ SYSCALL_DEFINE1(sched_other_rr_getquantum, int, quantum){
 	return other_rr_timeslice
 } 
 
+=======
+SYSCALL_DEFINE1(sched_other_rr_setquantum, unsigned int, quantum){
+    other_rr_time_slice = quantum;
+    return other_rr_time_slice;
+}
+>>>>>>> a9199f18230425282704171b18746a6f49442034
 /**
  * sys_sched_getrrquantum - return the default timeslice for the other round
  * robin scheduler.

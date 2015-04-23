@@ -238,17 +238,17 @@ void parse_arguments(int argc, char *argv[])
     /* define the allowable options */
     static struct option long_options[] = 
     {
-      {"help",no_argument, 0,'h'},
-      {"dump",no_argument, 0,'d'},
-      {"ppvals",no_argument, 0,'v'},
-      {"aggregate", required_argument,0,'a'},
-      {"scheduler", required_argument,0,'s'},
-      {"priority", required_argument,0,'p'},
+      {"help", no_argument, 0,'h'},
+      {"dump", no_argument, 0,'d'},
+      {"ppvals", no_argument, 0, 'v'},
+      {"aggregate", required_argument, 0, 'a'},
+      {"scheduler", required_argument, 0, 's'},
+      {"priority", required_argument, 0, 'p'},
       {"quantum", required_argument, 0, 'q'},
       {0,0,0,0}
     };
 
-    c = getopt_long(argc, argv, "hds:p:q", long_options,&option_index);
+    c = getopt_long(argc, argv, "hds:p:q:", long_options, &option_index);
     if (c == -1)
       break;
 
@@ -467,10 +467,16 @@ int main(int argc, char *argv[])
       perror("sched_setscheduler");
       exit(1);
     };
+    // LMCTODO: remove this
+    printf("Scheduler has been set.\n");
 
     if (quantum_set) {
+      //LMCTODO: remove printf's
+      printf("Quantum set, about to call getquantum.\n");
       old_quantum = syscall (SYS_other_rr_getquantum);
+      printf("Old_quantum is %d\n", old_quantum);
       syscall (SYS_other_rr_setquantum, quantum);
+      printf("Set quantum has been called.\n");
     }
 
     my_quantum = syscall (SYS_other_rr_getquantum);
