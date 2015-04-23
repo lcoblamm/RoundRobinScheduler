@@ -197,6 +197,7 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 
 	// check if it's FIFO or RR
 	if (other_rr_time_slice == 0) {
+		printk("FIFO\n");
 		return;
 	}
 
