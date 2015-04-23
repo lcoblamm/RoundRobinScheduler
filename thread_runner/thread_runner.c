@@ -455,7 +455,7 @@ int main(int argc, char *argv[])
   num_threads = quantum = ppvals = 0;
 
   parse_arguments(argc, argv);
-  //print_arguments();
+  print_arguments();
 
 
   /* set scheduling policy */
@@ -467,16 +467,10 @@ int main(int argc, char *argv[])
       perror("sched_setscheduler");
       exit(1);
     };
-    // LMCTODO: remove this
-    printf("Scheduler has been set.\n");
 
     if (quantum_set) {
-      //LMCTODO: remove printf's
-      printf("Quantum set, about to call getquantum.\n");
       old_quantum = syscall (SYS_other_rr_getquantum);
-      printf("Old_quantum is %d\n", old_quantum);
       syscall (SYS_other_rr_setquantum, quantum);
-      printf("Set quantum has been called.\n");
     }
 
     my_quantum = syscall (SYS_other_rr_getquantum);
