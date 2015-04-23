@@ -7208,20 +7208,12 @@ out_unlock:
 	return retval;
 }
 
-<<<<<<< HEAD
-//do i need another argument?
-//i am full of self doubt
-SYSCALL_DEFINE1(sched_other_rr_getquantum, int, quantum){
-	other_rr_time_slice = quantum;
-	return other_rr_timeslice
-} 
 
-=======
 SYSCALL_DEFINE1(sched_other_rr_setquantum, unsigned int, quantum){
+    int old_quantum = other_rr_time_slice;
     other_rr_time_slice = quantum;
-    return other_rr_time_slice;
+    return old_quantum;
 }
->>>>>>> a9199f18230425282704171b18746a6f49442034
 /**
  * sys_sched_getrrquantum - return the default timeslice for the other round
  * robin scheduler.
