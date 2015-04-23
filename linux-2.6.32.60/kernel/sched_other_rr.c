@@ -65,7 +65,6 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
  */
 static void yield_task_other_rr(struct rq *rq)
 {
-	printk(KERN_DEBUG "Yielding thread %d\n", rq->curr->tgid);
 	// if only one in queue, no need to move queue around
 	if (rq->other_rr.nr_running == 1) {
 		return;
@@ -104,8 +103,12 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
 	struct task_struct* curr;
 	curr = rq->curr;
-	printk(KERN_DEBUG "Current thread: %d\n", curr->tgid);
-	printk(KERN_DEBUG "Next thread: %d\n", next->tgid);
+	if (curr == next) {
+		printk(KERN_DEBUG "Curr & next are same in pick_next_task");
+	}
+	else {
+		printk(KERN_DEBUG "Curr & next are different in pick_next_task");	
+	}
 
 	// set timer to maintain correct runtime statistics
 	next->se.exec_start = rq->clock;
@@ -206,20 +209,19 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 
 	// check if it's FIFO or RR
 	if (other_rr_time_slice == 0) {
+		printk(KERN_DEBUG "FIFO in task_tick\n");
 		return;
 	}
 
+	printk(KERN_DEBUG "current time slice for task: %i\n", p->task_time_slice);
 	// decrement time by 1
 	if (p->task_time_slice > 0) {
-		printk(KERN_DEBUG "Decrementing time slice for task %d\n", p->tgid);
 		p->task_time_slice--;
-		if (p->task_time_slice == 0) {
-			printk(KERN_DEBUG "time slice reached 0 for task %d\n", p->tgid);
-		}
+		printk(KERN_DEBUG "Decrementing time slice for task to: %i\n", p->task_time_slice);		
 		return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
-	printk(KERN_DEBUG "Rescheduling task %d since timeslice ran out\n", p->tgid);
+	printk(KERN_DEBUG "Rescheduling task %d since timeslice ran out\n");
 	p->task_time_slice = other_rr_time_slice;
 	requeue_task_other_rr(rq, p);
 	set_tsk_need_resched(p);
