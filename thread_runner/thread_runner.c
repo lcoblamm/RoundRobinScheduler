@@ -23,7 +23,7 @@
 #define MAX_THREADS  20
 #define MAX_ARG_SIZE 80
 #define START_CHAR   97
-#define AGG_DEFAULT  10000
+#define AGG_DEFAULT  1
 
 #define MIN_PRIO -19
 #define MAX_PRIO 20

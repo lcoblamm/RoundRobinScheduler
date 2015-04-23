@@ -197,7 +197,6 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 
 	// check if it's FIFO or RR
 	if (other_rr_time_slice == 0) {
-		printk("FIFO\n");
 		return;
 	}
 
@@ -207,6 +206,7 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 		return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
+	printk("Requeueing\n");
 	p->task_time_slice = other_rr_time_slice;
 	requeue_task_other_rr(rq, p);
 	set_tsk_need_resched(p);
