@@ -36,7 +36,7 @@ static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wake
 	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 	// increment number of tasks in running queue
 	rq->other_rr.nr_running++;
-	printk(KERN_DEBUG "Number currently in queue: %u\n", rq->other_rr.nr_running);
+	printk(KERN_DEBUG "Number currently in queue: %lu\n", rq->other_rr.nr_running);
 }
 
 static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int sleep)
@@ -49,7 +49,7 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
 	list_del(&p->other_rr_run_list);
 	// update number of tasks in queue
 	rq->other_rr.nr_running--;
-	printk(KERN_DEBUG "Number currently in queue: %u\n", rq->other_rr.nr_running);
+	printk(KERN_DEBUG "Number currently in queue: %lu\n", rq->other_rr.nr_running);
 }
 /*
  * Put task to the end of the run list without the overhead of dequeue
@@ -102,7 +102,7 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	}
 	queue = &other_rr_rq->queue;
 	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
-	task_struct curr*;
+	struct task_struct curr*;
 	curr = rq->curr;
 	printk(KERN_DEBUG "Current thread: %d\n", curr->tgid);
 	printk(KERN_DEBUG "Next thread: %d\n", next->tgid)
