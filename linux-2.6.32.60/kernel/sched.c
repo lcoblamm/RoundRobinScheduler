@@ -5541,7 +5541,6 @@ void scheduler_tick(void)
 	int cpu = smp_processor_id();
 	struct rq *rq = cpu_rq(cpu);
 	struct task_struct *curr = rq->curr;
-
 	sched_clock_tick();
 
 	spin_lock(&rq->lock);

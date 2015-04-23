@@ -59,6 +59,7 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
  */
 static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
 {
+	printk(KERN_DEBUG "Requeueing thread\n");
 	list_move_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 }
 
@@ -67,6 +68,7 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
  */
 static void yield_task_other_rr(struct rq *rq)
 {
+	printk(KERN_DEBUG "Yielding thread\n");
 	// if only one in queue, no need to move queue around
 	if (rq->other_rr.nr_running == 1) {
 		return;
@@ -100,6 +102,7 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 	if (other_rr_rq->nr_running == 0) {
 		return NULL;
 	}
+	printk(KERN_DEBUG "Picking next task\n");
 	queue = &other_rr_rq->queue;
 	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
 
@@ -112,6 +115,7 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 
 static void put_prev_task_other_rr(struct rq *rq, struct task_struct *p)
 {
+	printk(KERN_DEBUG "Putting prev task\n");
 	update_curr_other_rr(rq);
 	p->se.exec_start = 0;
 }
@@ -227,6 +231,7 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
  */
 static void set_curr_task_other_rr(struct rq *rq)
 {
+	printk(KERN_DEBUG "Setting current task");
 	struct task_struct *p = rq->curr;
 	p->se.exec_start = rq->clock;
 }
@@ -237,6 +242,7 @@ static void set_curr_task_other_rr(struct rq *rq)
 static void switched_to_other_rr(struct rq *rq, struct task_struct *p,
 			     int running)
 {
+	printk(KERN_DEBUG "Switched to other_rr");
 	/*
 	 * Kick off the schedule if running, otherwise just see
 	 * if we can still preempt the current task.
