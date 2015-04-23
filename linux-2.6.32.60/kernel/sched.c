@@ -6505,7 +6505,7 @@ __setscheduler(struct rq *rq, struct task_struct *p, int policy, int prio)
 		p->sched_class = &rt_sched_class;
 		break;
 	case SCHED_OTHER_RR:
-		p-> sched_class = &other_rr_sched_class;
+		p->sched_class = &other_rr_sched_class;
 		printk("Scheduler changed to Other Round Robin"); 
 		break;
 	}
@@ -6655,13 +6655,21 @@ recheck:
 	oldprio = p->prio;
 	prev_class = p->sched_class;
 	__setscheduler(rq, p, policy, param->sched_priority);
+	// LMCTODO: remove this
+	printk("Sched.c: 6659 Returned from __setscheduler call\n");
 
 	if (running)
+		// LMCTODO: remove this
+		printk("sched.c:6663 running is true\n");
 		p->sched_class->set_curr_task(rq);
+		printk("sched.c:6665 current task set\n");
 	if (on_rq) {
+		// LMBCTODO: remove this
+		printk("sched.c:6668 on_rq is true\n");
 		activate_task(rq, p, 0);
-
+		printk("sched.c:6670 activiate_task returned\n");
 		check_class_changed(rq, p, prev_class, oldprio, running);
+		printk("sched.c:6672 check_class_changed returned\n");
 	}
 	__task_rq_unlock(rq);
 	spin_unlock_irqrestore(&p->pi_lock, flags);
