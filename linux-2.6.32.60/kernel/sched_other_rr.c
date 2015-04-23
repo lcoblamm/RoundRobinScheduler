@@ -32,7 +32,7 @@ static void update_curr_other_rr(struct rq *rq)
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
 	// TODOLMC: remove print statements, unneeded comments
-	printk(KERN_DEBUG "In enqueue_task\n");
+	/*printk(KERN_DEBUG "In enqueue_task\n");
 	if (p->policy == SCHED_OTHER_RR) {
 		printk(KERN_DEBUG "Scheduling policy already set to rr\n");
 	}
@@ -48,7 +48,7 @@ static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wake
 	// set scheduling category of task (not sure if needed)
 	p->policy = SCHED_OTHER_RR;
 	// set quantum of task (not sure if needed)
-	p->task_time_slice = other_rr_time_slice;
+	p->task_time_slice = other_rr_time_slice; */
 	// add task to end of queue
 	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 	// increment number of tasks in running queue
