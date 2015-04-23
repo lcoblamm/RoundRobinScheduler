@@ -62,17 +62,7 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
  */
 static void yield_task_other_rr(struct rq *rq)
 {
-	// if only one in queue, no need to move queue around
-	if (rq->other_rr.nr_running == 1) {
-		return;
-	}
-	// get current task
-	struct task_struct* curr;
-	curr = rq->curr;
-	// reset its time slice to default
-	curr->task_time_slice = other_rr_time_slice;
-	// move to end
-	requeue_task_other_rr(rq, curr);
+	requeue_task_other_rr(rq, rq->curr);
 }
 
 /*
