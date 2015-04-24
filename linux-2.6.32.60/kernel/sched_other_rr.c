@@ -31,7 +31,7 @@ static void update_curr_other_rr(struct rq *rq)
  */
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
-	printk(KERN_DEBUG "Enqueueing thread\n");
+	printk(KERN_DEBUG "Enqueueing thread %d\n", p->pid);
 	p->policy = SCHED_OTHER_RR;
 	p->task_time_slice = other_rr_time_slice;
 	// add task to end of queue
@@ -46,7 +46,7 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
-	printk(KERN_DEBUG "Dequeuing thread\n");
+	printk(KERN_DEBUG "Dequeuing thread %d\n", p->pid);
 	// remove task from queue
 	list_del(&p->other_rr_run_list);
 	// update number of tasks in queue
@@ -59,7 +59,7 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
  */
 static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
 {
-	printk(KERN_DEBUG "Requeueing thread\n");
+	printk(KERN_DEBUG "Requeueing thread %d\n", p->pid);
 	list_move_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 }
 
@@ -108,14 +108,15 @@ static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 
 	// set timer to maintain correct runtime statistics
 	next->se.exec_start = rq->clock;
-	
+	printk(KERN_DEBUG "Picked %d\n", next->pid);
+	printk(KERN_DEBUG "sched_class of next: %d\n", next->sched_class);
 	/* you need to return the selected task here */
 	return next;
 }
 
 static void put_prev_task_other_rr(struct rq *rq, struct task_struct *p)
 {
-	printk(KERN_DEBUG "Putting prev task\n");
+	printk(KERN_DEBUG "Putting prev task %d\n", p->pid);
 	update_curr_other_rr(rq);
 	p->se.exec_start = 0;
 }
@@ -201,7 +202,7 @@ move_one_task_other_rr(struct rq *this_rq, int this_cpu, struct rq *busiest,
  */
 static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 {
-	printk(KERN_DEBUG "Entering task_tick\n");
+	printk(KERN_DEBUG "Entering task_tick for thread %d\n", p->pid);
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
@@ -219,7 +220,7 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 		return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
-	printk(KERN_DEBUG "Rescheduling task %d since timeslice ran out\n");
+	printk(KERN_DEBUG "Rescheduling task %d since timeslice ran out\n", p->pid);
 	p->task_time_slice = other_rr_time_slice;
 	requeue_task_other_rr(rq, p);
 	set_tsk_need_resched(p);
