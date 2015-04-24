@@ -31,15 +31,10 @@ static void update_curr_other_rr(struct rq *rq)
  */
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
-	printk(KERN_DEBUG "Enqueueing thread %d\n", p->pid);	
-	//added this in. Is that what we're doing with the p policies below? Wouldn't this work as well? 
-	update_curr_other_rr(rq);
-
 	// add task to end of queue
 	list_add_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 	// increment number of tasks in running queue
 	rq->other_rr.nr_running++;
-	printk(KERN_DEBUG "Number currently in queue: %lu\n", rq->other_rr.nr_running);
 }
 
 static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int sleep)
@@ -47,20 +42,18 @@ static void dequeue_task_other_rr(struct rq *rq, struct task_struct *p, int slee
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
-	printk(KERN_DEBUG "Dequeuing thread %d\n", p->pid);
 	// remove task from queue
 	list_del(&p->other_rr_run_list);
 	// update number of tasks in queue
 	rq->other_rr.nr_running--;
-	printk(KERN_DEBUG "Number currently in queue: %lu\n", rq->other_rr.nr_running);
 }
+
 /*
  * Put task to the end of the run list without the overhead of dequeue
  * followed by enqueue.
  */
 static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
 {
-	printk(KERN_DEBUG "Requeueing thread %d\n", p->pid);
 	list_move_tail(&p->other_rr_run_list, &rq->other_rr.queue);
 }
 
@@ -69,18 +62,8 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
  */
 static void yield_task_other_rr(struct rq *rq)
 {
- 	printk(KERN_DEBUG "Yielding thread\n");
-	// if only one in queue, no need to move queue around
-	if (rq->other_rr.nr_running == 1) {
-		return;
-	}
-	// get current task
-	struct task_struct* curr;
-	curr = rq->curr;
-	// reset its time slice to default
-	curr->task_time_slice = other_rr_time_slice;
 	// move to end 
-	requeue_task_other_rr(rq, curr);
+	requeue_task_other_rr(rq, rq->curr);
 }
 
 /*
@@ -96,28 +79,25 @@ static void check_preempt_curr_other_rr(struct rq *rq, struct task_struct *p, in
  */
 static struct task_struct *pick_next_task_other_rr(struct rq *rq)
 {
-	struct task_struct *next = NULL;
-	struct list_head *queue;
+	struct task_struct *next;
+	struct list_head *queue = &rq->other_rr.queue;
 	struct other_rr_rq *other_rr_rq = &rq->other_rr;
 
 	if (other_rr_rq->nr_running == 0) {
 		return NULL;
 	}
-	printk(KERN_DEBUG "Picking next task\n");
-	queue = &other_rr_rq->queue;
-	next = list_entry(queue->next, struct task_struct, other_rr_run_list);
+
+	next = list_first_entry(queue, struct task_struct, other_rr_run_list);
 
 	// set timer to maintain correct runtime statistics
 	next->se.exec_start = rq->clock;
-	printk(KERN_DEBUG "Picked %d\n", next->pid);
-	printk(KERN_DEBUG "sched_class of next: %d\n", next->sched_class);
+
 	/* you need to return the selected task here */
 	return next;
 }
 
 static void put_prev_task_other_rr(struct rq *rq, struct task_struct *p)
 {
-	printk(KERN_DEBUG "Putting prev task %d\n", p->pid);
 	update_curr_other_rr(rq);
 	p->se.exec_start = 0;
 }
@@ -203,28 +183,23 @@ move_one_task_other_rr(struct rq *this_rq, int this_cpu, struct rq *busiest,
  */
 static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 {
-	printk(KERN_DEBUG "Entering task_tick for thread %d\n", p->pid);
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
 	// check if it's FIFO or RR
 	if (other_rr_time_slice == 0) {
-		printk(KERN_DEBUG "FIFO in task_tick\n");
 		return;
 	}
 
-	printk(KERN_DEBUG "Current time slice for task: %i\n", p->task_time_slice);
 	// decrement time by 1
 	if (p->task_time_slice > 0) {
 		p->task_time_slice--;
-		printk(KERN_DEBUG "Decrementing time slice for task to: %i\n", p->task_time_slice);		
 	//	return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
-	printk(KERN_DEBUG "Rescheduling task %d since timeslice ran out\n", p->pid);
 	p->task_time_slice = other_rr_time_slice;
-	requeue_task_other_rr(rq, p);
 	set_tsk_need_resched(p);
+	requeue_task_other_rr(rq, p);
 }
 
 /*
