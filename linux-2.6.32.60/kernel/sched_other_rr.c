@@ -223,10 +223,13 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 		return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
-	printk(KERN_DEBUG "Rescheduling task %d since timeslice ran out\n");
-	p->task_time_slice = other_rr_time_slice;
-	requeue_task_other_rr(rq, p);
-	set_tsk_need_resched(p);
+	//adding an else statement even though you've returned already because who know why c do what it do.
+	else{
+  		printk(KERN_DEBUG "Rescheduling task %d since timeslice ran out\n");
+		p->task_time_slice = other_rr_time_slice;
+		requeue_task_other_rr(rq, p);
+		set_tsk_need_resched(p);
+	}
 }
 
 /*
