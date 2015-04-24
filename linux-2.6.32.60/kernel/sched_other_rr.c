@@ -183,6 +183,7 @@ move_one_task_other_rr(struct rq *this_rq, int this_cpu, struct rq *busiest,
  */
 static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 {
+	printk(KERN_DEBUG "Entered task_tick_other_rr\n");
 	// first update the task's runtime statistics
 	update_curr_other_rr(rq);
 
@@ -194,7 +195,7 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 	// decrement time by 1
 	if (p->task_time_slice > 0) {
 		p->task_time_slice--;
-	//	return;
+		return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
 	p->task_time_slice = other_rr_time_slice;
@@ -208,7 +209,6 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
  */
 static void set_curr_task_other_rr(struct rq *rq)
 {
-	printk(KERN_DEBUG "Setting current task");
 	struct task_struct *p = rq->curr;
 	p->se.exec_start = rq->clock;
 }
@@ -219,7 +219,6 @@ static void set_curr_task_other_rr(struct rq *rq)
 static void switched_to_other_rr(struct rq *rq, struct task_struct *p,
 			     int running)
 {
-	printk(KERN_DEBUG "Switched to other_rr");
 	/*
 	 * Kick off the schedule if running, otherwise just see
 	 * if we can still preempt the current task.
@@ -259,5 +258,5 @@ const struct sched_class other_rr_sched_class = {
 	.select_task_rq = select_task_rq_other_rr,
 
 	.set_curr_task          = set_curr_task_other_rr,
-	.task_tick		= (void *)task_tick_other_rr,
+	.task_tick		= task_tick_other_rr,
 };
