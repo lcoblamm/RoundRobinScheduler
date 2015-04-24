@@ -72,7 +72,7 @@ static void requeue_task_other_rr(struct rq *rq, struct task_struct *p)
  */
 static void yield_task_other_rr(struct rq *rq)
 {
-	printk(KERN_DEBUG "Yielding thread\n");
+ 	printk(KERN_DEBUG "Yielding thread\n");
 	// if only one in queue, no need to move queue around
 	if (rq->other_rr.nr_running == 1) {
 		return;
@@ -82,7 +82,7 @@ static void yield_task_other_rr(struct rq *rq)
 	curr = rq->curr;
 	// reset its time slice to default
 	curr->task_time_slice = other_rr_time_slice;
-	// move to end
+	// move to end 
 	requeue_task_other_rr(rq, curr);
 }
 
@@ -220,7 +220,7 @@ static void task_tick_other_rr(struct rq *rq, struct task_struct *p, int queued)
 	if (p->task_time_slice > 0) {
 		p->task_time_slice--;
 		printk(KERN_DEBUG "Decrementing time slice for task to: %i\n", p->task_time_slice);		
-		return;
+	//	return;
 	}
 	// once it hits 0, reset time, move to end of queue, and set flag to reschedule
 	//adding an else statement even though you've returned already because who know why c do what it do.
