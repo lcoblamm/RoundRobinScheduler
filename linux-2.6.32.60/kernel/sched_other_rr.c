@@ -32,6 +32,10 @@ static void update_curr_other_rr(struct rq *rq)
 static void enqueue_task_other_rr(struct rq *rq, struct task_struct *p, int wakeup, bool b)
 {
 	printk(KERN_DEBUG "Enqueueing thread\n");
+	
+	//added this in. Is that what we're doing with the p policies below? Wouldn't this work as well? 
+	update_curr_other_rr(rq);
+
 	p->policy = SCHED_OTHER_RR;
 	p->task_time_slice = other_rr_time_slice;
 	// add task to end of queue
