@@ -23,7 +23,7 @@
 #define MAX_THREADS  20
 #define MAX_ARG_SIZE 80
 #define START_CHAR   97
-#define AGG_DEFAULT  1
+#define AGG_DEFAULT  10000
 
 #define MIN_PRIO -19
 #define MAX_PRIO 20
@@ -248,7 +248,7 @@ void parse_arguments(int argc, char *argv[])
       {0,0,0,0}
     };
 
-    c = getopt_long(argc, argv, "hdva:s:p:q:", long_options, &option_index);
+    c = getopt_long(argc, argv, "hds:p:q:", long_options, &option_index);
     if (c == -1)
       break;
 
@@ -430,7 +430,7 @@ void *run(void *arg)
   if (prio_set) {
     setpriority(PRIO_PROCESS, tid, my_args->prio);
   }
-  printf("Thread id: %d\n", tid);
+
   /* write characters to the val_buf */
   for(i = 0; i<my_args->nchars; i++) {
     if (pos > total_num_chars)
@@ -458,14 +458,12 @@ int main(int argc, char *argv[])
   parse_arguments(argc, argv);
   // print_arguments();
 
-
   /* set scheduling policy */
   if (sched_policy == SCHED_OTHER_RR) {
 
     /* priority has no effect -- just use 0 */
     param.sched_priority = 0;
     if ( sched_setscheduler(getpid(), sched_policy, &param) == -1) {
-      printf("Errno: %d\n", errno);
       perror("sched_setscheduler");
       exit(1);
     };
