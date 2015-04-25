@@ -266,5 +266,5 @@ const struct sched_class other_rr_sched_class = {
 	.select_task_rq = select_task_rq_other_rr,
 
 	.set_curr_task          = set_curr_task_other_rr,
-	.task_tick		= task_tick_other_rr,
+	.task_tick		= (void *)task_tick_other_rr,
 };
