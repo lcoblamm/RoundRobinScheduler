@@ -6504,8 +6504,8 @@ __setscheduler(struct rq *rq, struct task_struct *p, int policy, int prio)
 		p->sched_class = &rt_sched_class;
 		break;
 	case SCHED_OTHER_RR:
-		p-> sched_class = &other_rr_sched_class;
-		printk("Scheduler changed to Other Round Robin\n"); 
+		p->sched_class = &other_rr_sched_class;
+		printk(KERN_INFO "Scheduler changed to Other Round Robin\n"); 
 		break;
 	}
 
@@ -7211,6 +7211,7 @@ out_unlock:
 SYSCALL_DEFINE1(sched_other_rr_setquantum, unsigned int, quantum){
     int old_quantum = other_rr_time_slice;
     other_rr_time_slice = quantum;
+    printk(KERN_INFO "Quantum set to %d\n", other_rr_time_slice);
     return old_quantum;
 }
 /**
